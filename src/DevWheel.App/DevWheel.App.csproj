@@ -1,0 +1,18 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <OutputType>WinExe</OutputType>
+    <TargetFramework>net8.0-windows</TargetFramework>
+    <UseWPF>true</UseWPF>
+    <UseWindowsForms>true</UseWindowsForms>
+    <ImplicitUsings>disable</ImplicitUsings>
+    <AssemblyName>DevWheel</AssemblyName>
+    <RootNamespace>DevWheel.App</RootNamespace>
+    <ApplicationManifest>app.manifest</ApplicationManifest>
+    <!-- WPF owns the UI and reads PerMonitorV2 from app.manifest; the WinForms-only DPI analyzer does not apply. -->
+    <NoWarn>$(NoWarn);WFAC010</NoWarn>
+  </PropertyGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\DevWheel.Core\DevWheel.Core.csproj" />
+    <ProjectReference Include="..\DevWheel.Interop\DevWheel.Interop.csproj" />
+  </ItemGroup>
+</Project>

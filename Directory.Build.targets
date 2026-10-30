@@ -1,0 +1,10 @@
+<Project>
+  <!-- SEC-10: no third-party NuGet packages outside the test project. -->
+  <Target Name="DevWheelNoThirdPartyPackages" BeforeTargets="CollectPackageReferences;Build" Condition="'$(IsTestProject)' != 'true'">
+    <ItemGroup>
+      <_DevWheelExplicitPackage Include="@(PackageReference)" Condition="'%(PackageReference.IsImplicitlyDefined)' != 'true'" />
+    </ItemGroup>
+    <Error Condition="'@(_DevWheelExplicitPackage)' != ''"
+           Text="SEC-10: third-party NuGet packages are not allowed in $(MSBuildProjectName): @(_DevWheelExplicitPackage)" />
+  </Target>
+</Project>

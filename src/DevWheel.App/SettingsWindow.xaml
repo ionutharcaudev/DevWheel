@@ -1,0 +1,135 @@
+<Window x:Class="DevWheel.App.SettingsWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        Title="DevWheel settings" Width="720" Height="600" MinWidth="560" MinHeight="460"
+        WindowStartupLocation="CenterScreen">
+    <DockPanel Margin="12">
+        <DockPanel Margin="0,10,0,0" DockPanel.Dock="Bottom">
+            <StackPanel DockPanel.Dock="Right" Orientation="Horizontal">
+                <Button Content="Save" IsDefault="True" Click="Save_Click" Style="{StaticResource DialogButton}" />
+                <Button Content="Cancel" IsCancel="True" Style="{StaticResource DialogButton}" />
+            </StackPanel>
+            <TextBlock x:Name="ErrorText" VerticalAlignment="Center" Foreground="#C42B1C" TextWrapping="Wrap" />
+        </DockPanel>
+
+        <TabControl>
+            <TabItem Header="General">
+                <StackPanel Margin="12">
+                    <GroupBox Header="Hotkey" Padding="8">
+                        <StackPanel>
+                            <StackPanel Orientation="Horizontal">
+                                <TextBlock x:Name="HotkeyText" MinWidth="180" VerticalAlignment="Center" FontSize="14" FontWeight="SemiBold" />
+                                <Button x:Name="RecordButton" Content="Record" Click="RecordMain_Click" Padding="10,3" />
+                                <Button Content="Reset to default" Click="ResetHotkey_Click" Padding="10,3" Margin="8,0,0,0" />
+                            </StackPanel>
+                            <TextBlock x:Name="HotkeyStatus" Margin="0,6,0,0" Foreground="#666" TextWrapping="Wrap" />
+                            <TextBlock Margin="0,12,0,4" FontWeight="SemiBold" Text="Trigger mode" />
+                            <RadioButton x:Name="TapMode" Content="Tap: press the hotkey, the wheel stays open, click a tool" />
+                            <RadioButton x:Name="HoldMode" Margin="0,4,0,0" Content="Hold: hold the hotkey, move to a tool, release to run it" />
+                        </StackPanel>
+                    </GroupBox>
+                    <GroupBox Header="Clipboard" Margin="0,12,0,0" Padding="8">
+                        <StackPanel Orientation="Horizontal">
+                            <TextBlock VerticalAlignment="Center" Text="Clear sensitive output after" />
+                            <TextBox x:Name="ClearSecondsBox" Width="50" Margin="8,0" Padding="3,2" />
+                            <TextBlock x:Name="ClearRangeText" VerticalAlignment="Center" />
+                        </StackPanel>
+                    </GroupBox>
+                    <CheckBox x:Name="StartWithWindowsBox" Margin="0,14,0,0" Content="Start with Windows" />
+                </StackPanel>
+            </TabItem>
+
+            <TabItem Header="Wheel">
+                <Grid Margin="12">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="170" />
+                        <ColumnDefinition Width="12" />
+                        <ColumnDefinition Width="*" />
+                    </Grid.ColumnDefinitions>
+                    <DockPanel Grid.Column="0">
+                        <TextBlock Margin="0,0,0,4" DockPanel.Dock="Top" FontWeight="SemiBold" Text="Groups (clockwise)" />
+                        <StackPanel Margin="0,6,0,0" DockPanel.Dock="Bottom" Orientation="Horizontal">
+                            <Button Content="Up" Click="GroupUp_Click" Padding="10,2" />
+                            <Button Content="Down" Click="GroupDown_Click" Padding="10,2" Margin="6,0,0,0" />
+                        </StackPanel>
+                        <ListBox x:Name="GroupList">
+                            <ListBox.ItemTemplate>
+                                <DataTemplate>
+                                    <CheckBox Content="{Binding Name}" IsChecked="{Binding Visible}" />
+                                </DataTemplate>
+                            </ListBox.ItemTemplate>
+                        </ListBox>
+                    </DockPanel>
+                    <DockPanel Grid.Column="2">
+                        <TextBlock Margin="0,0,0,4" DockPanel.Dock="Top" FontWeight="SemiBold"
+                                   Text="Tools (order within a group, output, direct hotkey)" />
+                        <StackPanel Margin="0,6,0,0" DockPanel.Dock="Bottom" Orientation="Horizontal">
+                            <Button Content="Up" Click="ToolUp_Click" Padding="10,2" />
+                            <Button Content="Down" Click="ToolDown_Click" Padding="10,2" Margin="6,0,0,0" />
+                            <TextBlock Margin="12,0,0,0" VerticalAlignment="Center" Foreground="#666"
+                                       Text="Hotkey button: click, then press keys (Backspace clears)." />
+                        </StackPanel>
+                        <ListView x:Name="ToolList">
+                            <ListView.View>
+                                <GridView>
+                                    <GridViewColumn Header="Show" Width="46">
+                                        <GridViewColumn.CellTemplate>
+                                            <DataTemplate>
+                                                <CheckBox IsChecked="{Binding Visible}" />
+                                            </DataTemplate>
+                                        </GridViewColumn.CellTemplate>
+                                    </GridViewColumn>
+                                    <GridViewColumn Header="Group" Width="70" DisplayMemberBinding="{Binding Group}" />
+                                    <GridViewColumn Header="Tool" Width="170" DisplayMemberBinding="{Binding Name}" />
+                                    <GridViewColumn Header="Output" Width="130">
+                                        <GridViewColumn.CellTemplate>
+                                            <DataTemplate>
+                                                <ComboBox Width="112" IsEnabled="{Binding CanReplace}"
+                                                          ItemsSource="{Binding OutputChoices}" SelectedItem="{Binding Output}" />
+                                            </DataTemplate>
+                                        </GridViewColumn.CellTemplate>
+                                    </GridViewColumn>
+                                    <GridViewColumn Header="Hotkey" Width="130">
+                                        <GridViewColumn.CellTemplate>
+                                            <DataTemplate>
+                                                <Button MinWidth="110" Content="{Binding HotkeyText}" Click="RecordTool_Click" Tag="{Binding}" />
+                                            </DataTemplate>
+                                        </GridViewColumn.CellTemplate>
+                                    </GridViewColumn>
+                                </GridView>
+                            </ListView.View>
+                        </ListView>
+                    </DockPanel>
+                </Grid>
+            </TabItem>
+
+            <TabItem Header="Generators">
+                <StackPanel Margin="12">
+                    <GroupBox Header="Random secret" Padding="8">
+                        <StackPanel Orientation="Horizontal">
+                            <TextBlock VerticalAlignment="Center" Text="Length" />
+                            <ComboBox x:Name="SecretBytesBox" Width="90" Margin="8,0,16,0" />
+                            <TextBlock VerticalAlignment="Center" Text="Format" />
+                            <ComboBox x:Name="SecretFormatBox" Width="90" Margin="8,0,0,0" />
+                        </StackPanel>
+                    </GroupBox>
+                    <GroupBox Header="Password" Margin="0,12,0,0" Padding="8">
+                        <StackPanel>
+                            <StackPanel Orientation="Horizontal">
+                                <TextBlock VerticalAlignment="Center" Text="Length" />
+                                <TextBox x:Name="PasswordLengthBox" Width="60" Margin="8,0" Padding="3,2" />
+                                <TextBlock x:Name="PasswordRangeText" VerticalAlignment="Center" Foreground="#666" />
+                            </StackPanel>
+                            <CheckBox x:Name="UpperBox" Margin="0,10,0,0" Content="Uppercase A-Z" />
+                            <CheckBox x:Name="LowerBox" Margin="0,4,0,0" Content="Lowercase a-z" />
+                            <CheckBox x:Name="DigitsBox" Margin="0,4,0,0" Content="Digits 0-9" />
+                            <CheckBox x:Name="SymbolsBox" Margin="0,4,0,0" Content="Symbols !#$%..." />
+                        </StackPanel>
+                    </GroupBox>
+                    <TextBlock Margin="0,12,0,0" Foreground="#666" TextWrapping="Wrap"
+                               Text="These are the defaults. Shift+click a generator on the wheel to choose options for one run." />
+                </StackPanel>
+            </TabItem>
+        </TabControl>
+    </DockPanel>
+</Window>

@@ -1,0 +1,17 @@
+<Window x:Class="DevWheel.App.KeyPromptWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        Title="DevWheel" SizeToContent="WidthAndHeight" ResizeMode="NoResize"
+        WindowStyle="ToolWindow" Topmost="True" ShowInTaskbar="False">
+    <StackPanel Margin="16" Width="340">
+        <TextBlock x:Name="TitleText" FontSize="14" FontWeight="SemiBold" />
+        <TextBlock x:Name="HintText" Margin="0,4,0,10" Foreground="#666" TextWrapping="Wrap" />
+        <PasswordBox x:Name="KeyBox" Padding="4,3" />
+        <TextBlock Margin="0,6,0,0" FontSize="11" Foreground="#666" TextWrapping="Wrap"
+                   Text="Not stored anywhere; cleared when this window closes." />
+        <StackPanel Margin="0,14,0,0" HorizontalAlignment="Right" Orientation="Horizontal">
+            <Button Content="OK" IsDefault="True" Click="Ok_Click" Style="{StaticResource DialogButton}" />
+            <Button Content="Cancel" IsCancel="True" Style="{StaticResource DialogButton}" />
+        </StackPanel>
+    </StackPanel>
+</Window>
